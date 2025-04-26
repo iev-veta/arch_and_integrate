@@ -28,7 +28,7 @@ venv/Scripts/activate
 python .\flight_booking\manage.py runserver 8000
 ```
 
-А также сервис планирования поездок:
+А также сервис планирования поездок (http://127.0.0.1:7000/):
 
 ```bash
 python .\travel_planner\manage.py runserver 7000
