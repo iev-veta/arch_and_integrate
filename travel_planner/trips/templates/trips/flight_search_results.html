@@ -1,0 +1,23 @@
+<!-- trips/templates/trips/flight_search_results.html -->
+{% extends 'base.html' %}
+
+{% block title %}Flight Search Results{% endblock %}
+
+{% block content %}
+    <h1>Flight Search Results for {{ segment }}</h1>
+    <ul>
+        {% for flight in flights %}
+            <li>
+                {{ flight.departure_city }} -> {{ flight.arrival_city }} ({{ flight.airline }})<br>
+                Departure: {{ flight.departure_time }}<br>
+                Arrival: {{ flight.arrival_time }}<br>
+                Available Seats:
+                <ul>
+                    {% for seat in flight.available_seats %}
+                        <li>{{ seat.seat_code }} ({{ seat.flight_class }})</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

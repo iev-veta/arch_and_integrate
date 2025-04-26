@@ -1,0 +1,98 @@
+<!-- booking/templates/booking/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flight Booking Database</title>
+</head>
+<body>
+    <h1>Flight Booking Database</h1>
+
+    <h2>Countries</h2>
+    <ul>
+        {% for country in countries %}
+            <li>{{ country.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Cities</h2>
+    <ul>
+        {% for city in cities %}
+            <li>{{ city.name }} 
+                {% if city.country %}({{ city.country.name }}){% endif %}
+            </li>
+        {% empty %}
+            <li>No cities found</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Airports</h2>
+    <ul>
+        {% for airport in airports %}
+            <li>{{ airport.name }} ({{ airport.iata_code }}) - {{ airport.city.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Airlines</h2>
+    <ul>
+        {% for airline in airlines %}
+            <li>{{ airline.name }} ({{ airline.iata_code }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Flight Classes</h2>
+    <ul>
+        {% for flight_class in flight_classes %}
+            <li>{{ flight_class.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Airplane Models</h2>
+    <ul>
+        {% for airplane_model in airplane_models %}
+            <li>{{ airplane_model.name }} (Seats: {{ airplane_model.seat_capacity }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Airplanes</h2>
+    <ul>
+        {% for airplane in airplanes %}
+            <li>{{ airplane.model.name }} (ID: {{ airplane.id }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Seats</h2>
+    <ul>
+        {% for seat in seats %}
+            <li>{{ seat.seat_code }} ({{ seat.flight_class.name }}) - Airplane ID: {{ seat.airplane.id }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Passengers</h2>
+    <ul>
+        {% for passenger in passengers %}
+            <li>{{ passenger.full_name }} (Passport: {{ passenger.passport_number }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Flights</h2>
+    <ul>
+        {% for flight in flights %}
+            <li>{{ flight.flight_number }} ({{ flight.airline.name }}) - From: {{ flight.departure_airport.name }} To: {{ flight.arrival_airport.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Flight Schedules</h2>
+    <ul>
+        {% for flight_schedule in flight_schedules %}
+            <li>{{ flight_schedule.flight.flight_number }} - Departure: {{ flight_schedule.departure_time }} Arrival: {{ flight_schedule.arrival_time }} - Airplane ID: {{ flight_schedule.airplane.id }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Bookings</h2>
+    <ul>
+        {% for booking in bookings %}
+            <li>{{ booking.passenger.full_name }} - Flight: {{ booking.flight_schedule.flight.flight_number }} Seat: {{ booking.seat.seat_code }} ({{ booking.status }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

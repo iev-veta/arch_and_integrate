@@ -1,0 +1,14 @@
+<!-- trips/templates/trips/trip_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Trips{% endblock %}
+
+{% block content %}
+    <h1>My Trips</h1>
+    <a href="{% url 'trip_create' %}">Create New Trip</a>
+    <ul>
+        {% for trip in trips %}
+            <li><a href="{% url 'trip_detail' trip.id %}">{{ trip.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

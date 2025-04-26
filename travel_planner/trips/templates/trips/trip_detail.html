@@ -1,0 +1,25 @@
+<!-- trips/templates/trips/trip_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ trip.name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ trip.name }}</h1>
+    <a href="{% url 'segment_create' trip.id %}">Add Segment</a>
+    <ul>
+        {% for segment in segments %}
+            <li>
+                {{ segment }}
+                {% if segment.transport_type == 'flight' %}
+                    <button onclick="searchFlights({{ segment.id }})">Search Flights</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function searchFlights(segmentId) {
+            window.location.href = `{% url 'search_flights' segment_id=0 %}`.replace('0', segmentId);
+        }
+    </script>
+{% endblock %}

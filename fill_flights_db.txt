@@ -1,0 +1,134 @@
+-- Заполнение стран
+INSERT INTO countries (name) VALUES
+('Россия'),
+('США'),
+('Германия'),
+('Франция'),
+('Китай');
+
+-- Заполнение городов
+INSERT INTO cities (name, country_id) VALUES
+('Москва', 1),
+('Санкт-Петербург', 1),
+('Нью-Йорк', 2),
+('Лос-Анджелес', 2),
+('Берлин', 3);
+
+-- Заполнение аэропортов
+INSERT INTO airports (name, city_id, iata_code) VALUES
+('Шереметьево', 1, 'SVO'),
+('Пулково', 2, 'LED'),
+('JFK', 3, 'JFK'),
+('LAX', 4, 'LAX'),
+('Тегель', 5, 'TXL');
+
+-- Заполнение авиакомпаний
+INSERT INTO airlines (name, iata_code) VALUES
+('Аэрофлот', 'SU'),
+('Delta Airlines', 'DL'),
+('Lufthansa', 'LH'),
+('Air France', 'AF'),
+('China Eastern', 'MU');
+
+-- Заполнение классов перелета
+INSERT INTO flight_classes (name) VALUES
+('Economy'),
+('Business'),
+('First');
+
+-- Заполнение моделей самолетов
+INSERT INTO airplane_models (name, seat_capacity) VALUES
+('Boeing 737-800', 180),
+('Airbus A320', 150),
+('Boeing 787', 250),
+('Airbus A380', 500),
+('Sukhoi Superjet', 100);
+
+-- Заполнение самолетов
+INSERT INTO airplanes (model_id) VALUES
+(1), (1), (2), (3), (4);
+
+-- Заполнение мест (пример для первого Boeing 737-800)
+DO $$
+DECLARE
+  plane_id INT = 1;
+BEGIN
+  -- Business класс (ряды 1-5)
+  FOR row_num IN 1..5 LOOP
+    INSERT INTO seats (airplane_id, flight_class_id, row_number, seat_code) VALUES
+    (plane_id, 2, row_num, row_num || 'A'),
+    (plane_id, 2, row_num, row_num || 'B'),
+    (plane_id, 2, row_num, row_num || 'C');
+  END LOOP;
+
+  -- Economy класс (ряды 6-30)
+  FOR row_num IN 6..30 LOOP
+    INSERT INTO seats (airplane_id, flight_class_id, row_number, seat_code) VALUES
+    (plane_id, 1, row_num, row_num || 'A'),
+    (plane_id, 1, row_num, row_num || 'B'),
+    (plane_id, 1, row_num, row_num || 'C'),
+    (plane_id, 1, row_num, row_num || 'D'),
+    (plane_id, 1, row_num, row_num || 'E'),
+    (plane_id, 1, row_num, row_num || 'F');
+  END LOOP;
+END $$;
+
+-- Заполнение пассажиров
+INSERT INTO passengers (full_name, passport_number) VALUES
+('Иванов Иван Иванович', '1234567890'),
+('Петров Петр Петрович', '0987654321'),
+('Сидорова Анна Сергеевна', '1122334455'),
+('Козлов Дмитрий Викторович', '5566778899'),
+('Смирнова Ольга Александровна', '4433221100');
+
+-- Заполнение рейсов
+INSERT INTO flights (flight_number, airline_id, departure_airport_id, arrival_airport_id) VALUES
+('SU100', 1, 1, 3),
+('DL200', 2, 3, 4),
+('LH300', 3, 5, 1),
+('AF400', 4, 1, 5),
+('MU500', 5, 3, 5);
+
+-- Заполнение расписаний
+INSERT INTO flight_schedules (flight_id, departure_time, arrival_time, airplane_id) VALUES
+(1, '2024-01-10 10:00:00', '2024-01-10 14:00:00', 1),
+(2, '2024-01-11 12:00:00', '2024-01-11 15:00:00', 2),
+(3, '2024-01-12 08:00:00', '2024-01-12 11:00:00', 3),
+(4, '2024-01-13 16:00:00', '2024-01-13 19:00:00', 4),
+(5, '2024-01-14 09:00:00', '2024-01-14 12:00:00', 5);
+
+-- Заполнение бронирований (полный рейс)
+DO $$
+DECLARE
+  schedule_id INT = 1;
+  seat_count INT = (SELECT COUNT(*) FROM seats WHERE airplane_id = 1);
+BEGIN
+  FOR i IN 1..seat_count LOOP
+    INSERT INTO bookings (flight_schedule_id, seat_id, passenger_id, price, status)
+    VALUES (
+      schedule_id,
+      i,
+      (1 + (i % 5)), -- циклическое распределение по 5 пассажирам
+      25000.00 + (i % 3)*10000.00, -- разная цена
+      CASE WHEN i % 2 = 0 THEN 'paid' ELSE 'reserved' END
+    );
+  END LOOP;
+END $$;
+
+-- Заполнение бронирований (наполовину заполненный рейс)
+INSERT INTO bookings (flight_schedule_id, seat_id, passenger_id, price, status)
+SELECT 
+  2, 
+  id,
+  (1 + (id % 5)),
+  35000.00,
+  'paid'
+FROM seats 
+WHERE airplane_id = 2 
+LIMIT (SELECT COUNT(*) FROM seats WHERE airplane_id = 2) / 2;
+
+-- Остальные бронирования
+INSERT INTO bookings (flight_schedule_id, seat_id, passenger_id, price, status) VALUES
+(3, 15, 3, 42000.00, 'paid'),
+(4, 20, 4, 55000.00, 'reserved'),
+(5, 25, 5, 48000.00, 'paid');
