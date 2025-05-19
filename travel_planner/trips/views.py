@@ -73,17 +73,26 @@ def search_flights(request, segment_id):
         segment.departure_time.strftime("%Y-%m-%d") if segment.departure_time else None
     )
 
-    # Отправка запроса к API сервиса бронирования билетов
+    # Используем имя сервиса вместо 127.0.0.1
+    # Основной запрос = интеграция
     response = requests.get(
-        "http://127.0.0.1:8000/api/filtered-flights/",
+        "http://flight_booking-web-1:8000/api/filtered-flights/",
         params={
             "departure_city": departure_city,
             "arrival_city": arrival_city,
             "departure_date": departure_date,
         },
+        headers={"Host": "localhost"}, 
     )
 
-    flights = response.json()
+    try:
+        flights = response.json()
+    except ValueError as e:
+        # Логируем ошибку и возвращаем пустой список рейсов
+        print(f"Error decoding JSON: {e}")
+        print(f"Response content: {response.content}")
+        flights = []
+
     return render(
         request,
         "trips/flight_search_results.html",

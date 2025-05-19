@@ -80,7 +80,7 @@ DATABASES = {
         "NAME": "travel_db",
         "USER": "postgres",
         "PASSWORD": "3216",
-        "HOST": "127.0.0.1",
+        "HOST": "db_travel",
         "PORT": "5432",
         "OPTIONS": {
             "client_encoding": "UTF8",

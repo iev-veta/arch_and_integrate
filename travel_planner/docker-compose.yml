@@ -1,0 +1,34 @@
+services:
+  db_travel:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: travel_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 3216
+    volumes:
+      - postgres_data_travel:/var/lib/postgresql/data/
+    ports:
+      - "5431:5432"
+    networks:
+      - my_network
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:7000
+    volumes:
+      - .:/app
+    ports:
+      - "7000:7000"
+    depends_on:
+      - db_travel
+    environment:
+      - DATABASE_URL=postgres://postgres:3216@db_travel:5431/travel_db
+    networks:
+      - my_network
+
+volumes:
+  postgres_data_travel:
+
+networks:
+  my_network:
+    external: true

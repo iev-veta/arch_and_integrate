@@ -18,19 +18,19 @@
 ```bash
 git clone https://github.com/iev-veta/arch_and_integrate.git
 cd arch_and_integrate
-python -m venv venv
-venv/Scripts/activate
 ```
 
 Далее нужно запустить сервис поиска авиабилетов (http://127.0.0.1:8000/):
 
 ```bash
-python .\flight_booking\manage.py runserver 8000
+cd flight_booking
+docker-compose up --build -d
 ```
 
 А также сервис планирования поездок (http://127.0.0.1:7000/):
 
 ```bash
-python .\travel_planner\manage.py runserver 7000
+cd ../travel_planner
+docker-compose up --build -d
 ```
 
