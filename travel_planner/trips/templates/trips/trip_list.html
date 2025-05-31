@@ -1,14 +1,40 @@
-<!-- trips/templates/trips/trip_list.html -->
 {% extends 'base.html' %}
 
-{% block title %}My Trips{% endblock %}
+{% block title %}Мои путешествия{% endblock %}
 
 {% block content %}
-    <h1>My Trips</h1>
-    <a href="{% url 'trip_create' %}">Create New Trip</a>
-    <ul>
-        {% for trip in trips %}
-            <li><a href="{% url 'trip_detail' trip.id %}">{{ trip.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="page-header">
+        <h1 class="page-title">Мои путешествия</h1>
+        <a href="{% url 'trip_create' %}" class="add-button">+</a>
+    </div>
+    
+    {% if trips %}
+        <div class="trips-grid">
+            {% for trip in trips %}
+                <div class="trip-card">
+                    <a href="{% url 'trip_detail' trip.id %}">
+                        <h2 class="trip-name">{{ trip.name }}</h2>
+                        {% if trip.start_date and trip.end_date %}
+                            <div class="trip-dates">
+                                {{ trip.start_date|date:"d M Y" }} - {{ trip.end_date|date:"d M Y" }}
+                            </div>
+                        {% endif %}
+                        {% if trip.destinations.exists %}
+                            <div class="trip-destination">
+                                {% for destination in trip.destinations.all|slice:":3" %}
+                                    {{ destination.city }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                                {% if trip.destinations.count > 3 %}...{% endif %}
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>У вас пока нет запланированных путешествий</p>
+            <a href="{% url 'trip_create' %}" class="nav-button">Создать первое путешествие</a>
+        </div>
+    {% endif %}
 {% endblock %}

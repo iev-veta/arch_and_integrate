@@ -1,25 +1,116 @@
-<!-- trips/templates/trips/trip_detail.html -->
 {% extends 'base.html' %}
 
 {% block title %}{{ trip.name }}{% endblock %}
 
 {% block content %}
-    <h1>{{ trip.name }}</h1>
-    <a href="{% url 'segment_create' trip.id %}">Add Segment</a>
-    <ul>
-        {% for segment in segments %}
-            <li>
-                {{ segment }}
-                {% if segment.transport_type == 'flight' %}
-                    <button onclick="searchFlights({{ segment.id }})">Search Flights</button>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+<div class="page-header">
+    <h1 class="page-title">{{ trip.name }}</h1>
+    <a href="{% url 'segment_create' trip.id %}" class="add-button">+</a>
+</div>
 
-    <script>
-        function searchFlights(segmentId) {
-            window.location.href = `{% url 'search_flights' segment_id=0 %}`.replace('0', segmentId);
-        }
-    </script>
+<div class="content-container">
+    {% if trip.start_date and trip.end_date %}
+    <div class="trip-dates">
+        <strong>Дата путешествия:</strong> {{ trip.start_date|date:"d M Y" }} - {{ trip.end_date|date:"d M Y" }}
+    </div>
+    {% endif %}
+
+    {% if trip.description %}
+    <div class="trip-description">
+        <p>{{ trip.description }}</p>
+    </div>
+    {% endif %}
+
+    <div class="segments-container">
+        <h2>Маршрут путешествия</h2>
+
+        {% if segments %}
+        <div class="segments-list">
+            {% for segment in segments %}
+            <div class="segment-card">
+                <div class="segment-info">
+                    <h3>{{ segment.departure_city }} → {{ segment.arrival_city }}</h3>
+                    <p>Тип транспорта: {{ segment.get_transport_type_display }}</p>
+                    <p>Дата: {{ segment.departure_time|date:"d M Y H:i" }}</p>
+                </div>
+
+                {% if segment.transport_type == 'flight' %}
+                <div class="segment-actions">
+                    <a href="{% url 'search_flights' segment.id %}" class="nav-button">Найти авиабилеты</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>В этом путешествии пока нет маршрутов</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .trip-dates {
+        background-color: rgba(3, 177, 154, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .trip-description {
+        margin-bottom: 30px;
+        line-height: 1.6;
+        padding: 15px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+    }
+
+    .segments-container {
+        margin-top: 30px;
+    }
+
+    .segments-container h2 {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+
+    .segment-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .segment-info h3 {
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .segment-info p {
+        margin: 5px 0;
+        color: var(--text-dark);
+    }
+
+    .segment-actions {
+        margin-left: 20px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-light);
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
 {% endblock %}
